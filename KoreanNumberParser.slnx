@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/KoreanNumberParser/KoreanNumberParser.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/KoreanNumberParser.Tests/KoreanNumberParser.Tests.csproj" />
+  </Folder>
+</Solution>

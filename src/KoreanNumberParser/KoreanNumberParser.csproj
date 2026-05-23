@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>KoreanNumberParser</PackageId>
+    <Title>KoreanNumberParser</Title>
+    <Description>Parse Korean number strings into integers and format integers as Korean number strings.</Description>
+    <Authors>Howon Lee (airtaxi)</Authors>
+    <Company>airtaxi</Company>
+    <Version>1.0.0</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>korean;hangul;number;parser;formatter;netstandard</PackageTags>
+    <RepositoryUrl>https://github.com/airtaxi/KoreanNumberParser</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
