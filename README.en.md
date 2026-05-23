@@ -2,6 +2,7 @@
 
 [![NuGet](https://img.shields.io/nuget/v/KoreanNumberParser.svg)](https://www.nuget.org/packages/KoreanNumberParser)
 [![NuGet downloads](https://img.shields.io/nuget/dt/KoreanNumberParser.svg)](https://www.nuget.org/packages/KoreanNumberParser)
+[![Pack and Publish](https://github.com/airtaxi/KoreanNumberParser/actions/workflows/pack-and-publish.yml/badge.svg)](https://github.com/airtaxi/KoreanNumberParser/actions/workflows/pack-and-publish.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 🌐 English | [한국어](README.md)
