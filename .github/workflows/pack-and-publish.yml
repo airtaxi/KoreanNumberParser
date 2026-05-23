@@ -1,6 +1,13 @@
 name: Pack and Publish NuGet
 
 on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the current package to NuGet.org.
+        required: true
+        default: false
+        type: boolean
   push:
     branches:
       - main
@@ -24,7 +31,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check version increase
+      - name: Resolve publish mode
         id: version
         shell: pwsh
         run: |
@@ -35,8 +42,27 @@ jobs:
           $currentVersion = ($currentProject.Project.PropertyGroup | Where-Object { $_.Version } | Select-Object -First 1).Version
           if ([string]::IsNullOrWhiteSpace($currentVersion)) { throw "Current Version was not found in $projectPath." }
 
+          $eventName = "${{ github.event_name }}"
+          if ($eventName -eq "workflow_dispatch") {
+            $shouldPublish = "${{ inputs.publish }}" -eq "true"
+            "run=true" >> $env:GITHUB_OUTPUT
+            "publish=$($shouldPublish.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
+            "current=$currentVersion" >> $env:GITHUB_OUTPUT
+            "previous=" >> $env:GITHUB_OUTPUT
+
+            if ($shouldPublish) {
+              "Manual run requested NuGet publishing for version $currentVersion."
+            }
+            else {
+              "Manual run will test and pack version $currentVersion without publishing."
+            }
+
+            exit 0
+          }
+
           $previousCommit = "${{ github.event.before }}"
           if ([string]::IsNullOrWhiteSpace($previousCommit) -or $previousCommit -match "^0+$") {
+            "run=false" >> $env:GITHUB_OUTPUT
             "publish=false" >> $env:GITHUB_OUTPUT
             "current=$currentVersion" >> $env:GITHUB_OUTPUT
             "previous=" >> $env:GITHUB_OUTPUT
@@ -55,6 +81,7 @@ jobs:
           $previousSemanticVersion = [System.Management.Automation.SemanticVersion]::Parse($previousVersion)
           $shouldPublish = $currentSemanticVersion -gt $previousSemanticVersion
 
+          "run=$($shouldPublish.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
           "publish=$($shouldPublish.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
           "current=$currentVersion" >> $env:GITHUB_OUTPUT
           "previous=$previousVersion" >> $env:GITHUB_OUTPUT
@@ -67,21 +94,21 @@ jobs:
           }
 
       - name: Setup .NET
-        if: steps.version.outputs.publish == 'true'
+        if: steps.version.outputs.run == 'true'
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
 
       - name: Test
-        if: steps.version.outputs.publish == 'true'
+        if: steps.version.outputs.run == 'true'
         run: dotnet test KoreanNumberParser.slnx -c Release
 
       - name: Pack
-        if: steps.version.outputs.publish == 'true'
+        if: steps.version.outputs.run == 'true'
         run: dotnet pack src/KoreanNumberParser/KoreanNumberParser.csproj -c Release /p:ContinuousIntegrationBuild=true --output artifacts/packages
 
       - name: Validate package
-        if: steps.version.outputs.publish == 'true'
+        if: steps.version.outputs.run == 'true'
         shell: bash
         run: |
           set -euo pipefail
