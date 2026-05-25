@@ -12,6 +12,7 @@ on:
     branches:
       - main
     paths:
+      - .github/workflows/pack-and-publish.yml
       - src/KoreanNumberParser/KoreanNumberParser.csproj
 
 permissions:
@@ -73,7 +74,8 @@ jobs:
           $previousProjectText = & git show "$previousCommit`:$projectPath"
           if ($LASTEXITCODE -ne 0) { throw "Previous project file was not found at $previousCommit`:$projectPath." }
 
-          [xml]$previousProject = $previousProjectText -join "`n"
+          $previousProjectXml = ($previousProjectText -join "`n") -replace "^\uFEFF", ""
+          [xml]$previousProject = $previousProjectXml
           $previousVersion = ($previousProject.Project.PropertyGroup | Where-Object { $_.Version } | Select-Object -First 1).Version
           if ([string]::IsNullOrWhiteSpace($previousVersion)) { throw "Previous Version was not found in $projectPath." }
 
